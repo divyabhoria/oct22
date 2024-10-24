@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts</title>
+</head>
+<body>
+    <h1>Blog Posts</h1>
+
+    <form action="/posts" method="POST">
+        <input type="text" name="title" placeholder="Title" required><br>
+        <textarea name="body" placeholder="Body" required></textarea><br>
+        <button type="submit">Add Post</button>
+    </form>
+
+    <h2>All Posts:</h2>
+    <% if (posts.length === 0) { %>
+        <p>No posts yet. Be the first to add one!</p>
+    <% } else { %>
+        <ul>
+            <% posts.forEach(post => { %>
+                <li>
+                    <a href="/posts/<%= post.title %>"><%= post.title %></a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</body>
+</html>
