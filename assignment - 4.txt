@@ -1,0 +1,19 @@
+1. Create and insert :-
+ db.students.insertOne({name: "Alex", age: 15, grade: "A"});
+ db.students.insertOne({name: "Emily", age: 15, grade: "B"});
+ db.students.insertOne({name: "Soma", age: 19, grade: "C"});
+ db.students.insertOne({name: "Tom", age: 21, grade: "C"});
+ db.students.insertOne({name: "John", age: 17, grade: "C"});
+
+2. Find documents :-
+db.students.find();
+
+3. Find documents(specific criteria) :-
+db.students.find({age: {$gt: 18}});
+
+4. Update :-
+ db.students.updateOne({name: "John"}, {$set:{grade: "A"}});
+
+5. Delete :-
+db.students.deleteOne({name: "Emily"});
+
