@@ -1,0 +1,199 @@
+question 1 
+
+CREATE TABLE Books (
+    BookID INT PRIMARY KEY,
+    Title VARCHAR(100),
+    Author VARCHAR(50),
+    PublishedYear INT
+);
+
+ALTER TABLE Books
+ADD ISBN VARCHAR(13);
+
+ALTER TABLE Books
+DROP COLUMN PublishedYear;
+ 
+
+---------------------------------------------------------------------------------
+
+question 2 
+
+SELECT Name
+FROM Students
+WHERE Age > 15;
+
+INSERT INTO Students (StudentID, Name, Age, Grade)
+VALUES (104, 'Tom Brown', 15, 'C');
+
+UPDATE Students
+SET Grade = 'A+'
+WHERE Name = 'Jane Doe';
+
+DELETE FROM Students
+WHERE Grade = 'C';
+
+---------------------------------------------------------------------------------
+
+question 3 
+
+GRANT SELECT, INSERT ON Books TO User2;
+
+REVOKE INSERT ON Books FROM User2;
+
+---------------------------------------------------------------------------------
+
+question 4 
+
+START TRANSACTION;
+
+INSERT INTO Orders (OrderID, ProductID, Quantity)
+VALUES (201, 105, 2);
+
+UPDATE Inventory
+SET Quantity = Quantity - 2
+WHERE ProductID = 105;
+
+COMMIT; -- If successful
+ROLLBACK; -- If an error occurs
+
+
+---------------------------------------------------------------------------------
+
+question 5 
+
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Email VARCHAR(50),
+    Phone VARCHAR(15)
+);
+
+INSERT INTO Customers (CustomerID, Name, Email, Phone)
+VALUES (201, 'Emily Clark', 'emily@example.com', '1234567890');
+
+GRANT SELECT ON Customers TO AdminUser;
+
+ROLLBACK;
+
+---------------------------------------------------------------------------------
+
+question 6 
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Department VARCHAR(30),
+    Salary INT
+);
+
+ALTER TABLE Employees
+RENAME COLUMN Department TO Dept;
+
+ALTER TABLE Employees
+ADD JoiningDate DATE DEFAULT '2024-01-01';
+
+ALTER TABLE Employees
+DROP COLUMN Salary;
+
+CREATE TABLE Departments (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(30) UNIQUE
+);
+
+ALTER TABLE Employees
+ADD CONSTRAINT FK_DeptID
+FOREIGN KEY (Dept) REFERENCES Departments(DeptID);
+
+---------------------------------------------------------------------------------
+
+question 7 
+
+INSERT INTO Employees (EmployeeID, Name, Dept, Salary)
+VALUES (1, 'Alice', 'HR', 50000);
+
+SELECT * FROM Employees
+WHERE Dept = 'HR';
+
+UPDATE Employees
+SET Salary = Salary * 1.10
+WHERE Dept = 'IT';
+
+DELETE FROM Employees
+WHERE Salary < 40000;
+
+MERGE INTO Employees AS Target
+USING (VALUES (1, 'Alice', 'HR', 55000)) AS Source (EmployeeID, Name, Dept, Salary)
+ON Target.EmployeeID = Source.EmployeeID
+WHEN MATCHED THEN
+    UPDATE SET Salary = Source.Salary
+WHEN NOT MATCHED THEN
+    INSERT (EmployeeID, Name, Dept, Salary)
+    VALUES (Source.EmployeeID, Source.Name, Source.Dept, Source.Salary);
+
+---------------------------------------------------------------------------------
+
+question 8
+
+GRANT SELECT, UPDATE ON Employees TO HRManager;
+
+REVOKE UPDATE ON Employees FROM HRManager;
+
+CREATE ROLE DataViewer;
+GRANT SELECT ON ALL TABLES TO DataViewer;
+
+GRANT DataViewer TO Viewer1;
+
+REVOKE ALL PRIVILEGES ON ALL TABLES FROM InternUser;
+
+---------------------------------------------------------------------------------
+
+question 9
+
+START TRANSACTION;
+INSERT INTO Departments (DeptID, DeptName)
+VALUES (1, 'Finance');
+COMMIT;
+
+START TRANSACTION;
+INSERT INTO Departments (DeptID, DeptName)
+VALUES (2, 'IT');
+ROLLBACK; -- If error occurs
+COMMIT; -- If successful
+
+START TRANSACTION;
+
+INSERT INTO Employees (EmployeeID, Name, Dept, Salary)
+VALUES (2, 'Bob', 'Finance', 45000);
+SAVEPOINT InsertBob;
+
+INSERT INTO Employees (EmployeeID, Name, Dept, Salary)
+VALUES (3, 'Charlie', 'IT', 50000);
+
+ROLLBACK TO InsertBob; -- If Charlie's insertion fails
+COMMIT; -- If successful
+
+---------------------------------------------------------------------------------
+
+question 10
+
+CREATE TABLE Projects (
+    ProjectID INT PRIMARY KEY,
+    ProjectName VARCHAR(50),
+    EmployeeID INT,
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+INSERT INTO Projects (ProjectID, ProjectName, EmployeeID)
+VALUES (101, 'Website Upgrade', 1);
+
+START TRANSACTION;
+
+INSERT INTO Projects (ProjectID, ProjectName, EmployeeID)
+VALUES (102, 'Mobile App Development', 2);
+
+IF @@ERROR <> 0
+    ROLLBACK;
+ELSE
+    COMMIT;
+
+
